@@ -6,16 +6,9 @@ typedef uint32_t size_t;
 
 extern char __bss[], __bss_end[], __stack_top[];
 
-void *memset(void *buf, char c, size_t n) {
-    uint8_t *p = (uint8_t *) buf;
-    while (n--)
-        *p++ = c;
-    return buf;
-}
-
 void kernel_main(void) {
-    printf("\n\nHello %s\n", "World!");
-    printf("1 + 2 = %d, %x\n", 1 + 2, 0x1234abcd);
+    kprintf("\n\nHello %s\n", "World!");
+    kprintf("1 + 2 = %d, %x\n", 1 + 2, 0x1234abcd);
 
     for (;;) {
         __asm__ __volatile__("wfi");

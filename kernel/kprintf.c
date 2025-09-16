@@ -1,9 +1,9 @@
-#include "printf.h"
+#include "kprintf.h"
 #include "util.h"
 
-void putchar(char ch);
+void kputchar(char ch);
 
-void printf(const char *fmt, ...)
+void kprintf(const char *fmt, ...)
 {
     va_list vargs;
     va_start(vargs, fmt);
@@ -13,15 +13,15 @@ void printf(const char *fmt, ...)
             fmt++;
             switch (*fmt) {
                 case '\0':
-                    putchar('%');
+                    kputchar('%');
                     goto end;
                 case '%':
-                    putchar('%');
+                    kputchar('%');
                     break;
                 case 's': {
                     const char *s = va_arg(vargs, const char *);
                     while (*s) {
-                        putchar(*s);
+                        kputchar(*s);
                         s++;
                     }
                     break;
@@ -30,7 +30,7 @@ void printf(const char *fmt, ...)
                     int value = va_arg(vargs, int);
                     unsigned magnitude = value; // https://github.com/nuta/operating-system-in-1000-lines/issues/64
                     if (value < 0) {
-                        putchar('-');
+                        kputchar('-');
                         magnitude = -magnitude;
                     }
 
@@ -39,7 +39,7 @@ void printf(const char *fmt, ...)
                         divisor *= 10;
 
                     while (divisor > 0) {
-                        putchar('0' + magnitude / divisor);
+                        kputchar('0' + magnitude / divisor);
                         magnitude %= divisor;
                         divisor /= 10;
                     }
@@ -50,12 +50,12 @@ void printf(const char *fmt, ...)
                     unsigned value = va_arg(vargs, unsigned);
                     for (int i = 7; i >= 0; i--) {
                         unsigned nibble = (value >> (i * 4)) & 0xf;
-                        putchar("0123456789abcdef"[nibble]);
+                        kputchar("0123456789abcdef"[nibble]);
                     }
                 }
             }
         } else {
-            putchar(*fmt);
+            kputchar(*fmt);
         }
 
         fmt++;
