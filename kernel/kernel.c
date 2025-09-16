@@ -1,4 +1,4 @@
-#include "printf.h"
+#include "kprintf.h"
 
 typedef unsigned char uint8_t;
 typedef unsigned int uint32_t;
