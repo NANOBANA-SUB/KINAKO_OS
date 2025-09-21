@@ -7,8 +7,7 @@ typedef uint32_t size_t;
 extern char __bss[], __bss_end[], __stack_top[];
 
 void kernel_main(void) {
-    kprintf("\n\nHello %s\n", "World!");
-    kprintf("1 + 2 = %d, %x\n", 1 + 2, 0x1234abcd);
+    kprintf("\n\nHello KINAKO_OS!!\n");
 
     for (;;) {
         __asm__ __volatile__("wfi");
