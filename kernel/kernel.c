@@ -1,14 +1,18 @@
+#include "types.h"
+#include "kstring.h"
 #include "kprintf.h"
-
-typedef unsigned char uint8_t;
-typedef unsigned int uint32_t;
-typedef uint32_t size_t;
+#include "exception.h"
 
 extern char __bss[], __bss_end[], __stack_top[];
 
-void kernel_main(void) {
+void kernel_main(void) 
+{
+    memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
     kprintf("\n\nHello KINAKO_OS!!\n");
 
+    WRITE_CSR(stvec, (uint64_t) kernel_entry);
+    __asm__ __volatile__("unimp"); // 無効な命令
+    
     for (;;) {
         __asm__ __volatile__("wfi");
     }
