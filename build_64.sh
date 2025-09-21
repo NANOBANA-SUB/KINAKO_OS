@@ -14,7 +14,7 @@ CFLAGS="-std=c11 -O2 -g3 -Wall -Wextra \
 cd kernel
 # カーネルをビルド
 $CC $CFLAGS -Wl,-Tkernel.ld -Wl,-Map=kernel.map -o kernel.elf \
-    kernel.c kprintf.c kstring.c
+    kernel.c kprintf.c kstring.c memory_alloc.c
 
 # elf2bin
 riscv64-elf-objcopy -O binary kernel.elf kernel.bin
