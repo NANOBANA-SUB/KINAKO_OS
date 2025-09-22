@@ -4,7 +4,7 @@
 
 // --- 調整パラメータ ---
 #define NPROC        16
-#define KSTACK_SIZE  4096
+#define KSTACK_SIZE  8192
 #define PNAME_LEN    16
 
 // コンテクストスイッチのために保存するレジスタ群.
@@ -25,6 +25,7 @@ struct context
     uint64_t s10;
     uint64_t s11;
 };
+typedef struct context context;
 
 // プロセス状態
 enum procstate
@@ -36,16 +37,7 @@ enum procstate
     P_SLEEPING,     // スリープ
     P_ZOMBIE        // 終了待ち
 };
-
-// トラップフレーム
-// 割り込みや例外で自動待避するCSRやレジスタ群を保存する
-struct trapframe
-{
-    uint64_t mepc;
-    uint64_t mstatus;
-    uint64_t mcause;
-    uint64_t mtval;
-};
+typedef enum procstate procstate;
 
 // プロセス制御構造体
 struct proc
@@ -59,15 +51,10 @@ struct proc
     int         nice;               // 優先度
 
     // カーネルスタック
-    void*       kstack;             // 低位アドレス(確保先)
-    void*       kstack_top;         // 高位アドレス(sp 初期値)
-    size_t      kstack_sz;
+    uint8_t kstack[KSTACK_SIZE];
 
     // コンテクスト(コンテクストスイッチで保存・復元するレジスタ)
     context     ctx;
-
-    // トラップフレーム
-    trapframe*  tf;
 
     // 親子関係
     struct proc* parent;
@@ -78,6 +65,7 @@ struct proc
     // リンク
     struct proc* next;
 };
+typedef struct proc proc;
 
 struct proctable
 {
@@ -88,6 +76,7 @@ struct proctable
     proc*   current;        // 実行中
     int     next_pid;
 };
+typedef struct proctable proctable;
 
 extern proctable g_proctab;
 
