@@ -64,6 +64,9 @@ struct proc
 
     // リンク
     struct proc* next;
+
+    // コンテクストスイッチ時のスタックポインタ
+    vaddr_t sp;
 };
 typedef struct proc proc;
 
@@ -79,11 +82,8 @@ struct proctable
 typedef struct proctable proctable;
 
 extern proctable g_proctab;
+extern proc procs[NPROC];
 
 // API
-static inline void cxt_init(context *cxt, void (*entry)(void *), void *arg, void *stack_top);
-
-void     proc_init(void* (*kalloc)(size_t), void (*kfree)(void*));
-proc*    proc_alloc(const char* name, void (*entry)(void*), void* arg);
-void     scheduler(void);
-void     yield(void);
+struct proc *create_process(uint64_t pc);
+void context_switch(uint64_t *prev_sp, uint64_t *next_sp);
