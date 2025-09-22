@@ -2,7 +2,7 @@
 #include "kstring.h"
 #include "kprintf.h"
 #include "memory_alloc.h"
-#include "exception.h"
+#include "trap.h"
 
 extern char __bss[], __bss_end[], __stack_top[];
 
@@ -13,13 +13,7 @@ void kernel_main(void)
 
     WRITE_CSR(stvec, (uint64_t) kernel_entry);
     
-    paddr_t paddr0 = alloc_pages(2);
-    paddr_t paddr1 = alloc_pages(1);
-
-    kprintf("alloc_pages test: paddr0=%x\n", paddr0);
-    kprintf("alloc_pages test: paddr1=%x\n", paddr1);
-
-    PANIC("booted!");
+    __asm__ __volatile__("unimp"); // 無効な命令
     
     for (;;) {
         __asm__ __volatile__("wfi");
