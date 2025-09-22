@@ -21,7 +21,7 @@ void proc_a_entry(void) {
     kprintf("starting process A\n");
     while (1) {
         kputchar('A');
-        context_switch(&proc_a->sp, &proc_b->sp);
+        yield();
         delay();
     }
 }
@@ -30,7 +30,7 @@ void proc_b_entry(void) {
     kprintf("starting process B\n");
     while (1) {
         kputchar('B');
-        context_switch(&proc_b->sp, &proc_a->sp);
+        yield();
         delay();
     }
 }
@@ -42,10 +42,14 @@ void kernel_main(void)
 
     WRITE_CSR(stvec, (uint64_t) kernel_entry);
     
+    idle_proc = create_process((uint64_t) NULL);
+    idle_proc->pid = 0;
+    current_proc = idle_proc;
+
     proc_a = create_process((uint64_t) proc_a_entry);
     proc_b = create_process((uint64_t) proc_b_entry);
-    proc_a_entry();
-
+    
+    yield();
     PANIC("unreachable here!");
     
     for (;;) {

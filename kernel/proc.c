@@ -4,6 +4,41 @@
 
 struct proc procs[NPROC];
 
+struct proc *current_proc;  // 実行中プロセス
+struct proc *idle_proc;     // アイドルプロセス
+
+void yield(void)
+{
+    // 実行可能プロセスの探索
+    struct proc *next = idle_proc;
+
+    for (int i = 0; i < NPROC; i++)
+    {
+        struct proc *proc = &procs[(current_proc->pid + i) % NPROC];
+
+        if (proc->state == P_RUNNABLE && proc->pid > 0)
+        {
+            next = proc;
+            break;
+        }
+    }
+
+    // 現在実行中のプロセス以外に実行可能プロセスが存在しない
+    if (next == current_proc)
+        return;
+
+    __asm__ __volatile__(
+        "csrw sscratch, %[sscratch]\n"
+        :
+        : [sscratch] "r" ((uint64_t) &next->kstack[sizeof(next->kstack)])
+    );
+
+    // コンテクストスイッチ
+    struct proc *prev = current_proc;
+    current_proc = next;
+    context_switch(&prev->sp, &next->sp);
+}
+
 struct proc *create_process(uint64_t pc)
 {
     // 利用可能なプロセスを探す

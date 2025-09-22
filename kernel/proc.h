@@ -83,7 +83,10 @@ typedef struct proctable proctable;
 
 extern proctable g_proctab;
 extern proc procs[NPROC];
+extern proc *current_proc;
+extern proc *idle_proc;
 
 // API
 struct proc *create_process(uint64_t pc);
 void context_switch(uint64_t *prev_sp, uint64_t *next_sp);
+void yield(void);
